@@ -1,14 +1,30 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const flash = require('connect-flash');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const expressValidator = require('express-validator');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+// Database
+mongoose.connect('mongodb://localhost/watches');
+const db = mongoose.connection;
+const Schemas = require('./models')
 
-var app = express();
+db.on('error', console.error.bind(console, 'connection error: '));
+db.once('open', function() {
+  // Connected!
+  console.log('Connected!');
+})
+
+const routes = require('./routes/index');
+const users = require('./routes/users');
+const watches = require('./routes/watches');
+
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,11 +35,25 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator()); // this line must be immediately after express.bodyParser()!
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}));
+
+// Set up flash messages.
+app.use(flash());
+
+app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/watches', watches);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -32,7 +62,6 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
 
 // development error handler
 // will print stacktrace

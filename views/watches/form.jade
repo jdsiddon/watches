@@ -1,0 +1,50 @@
+block content
+  include ../error
+  
+  h1= title
+  
+  form(action='/watches/create' method='post')
+    if watch
+      input#id(type='hidden' name='id' value='#{watch.id}')
+        
+    .form-group
+      label(for='brand') Brand
+      input#brand.form-control(type='text' name='brand' placeholder='Brand' value=(watch ? '#{watch.brand}' : ''))
+      
+    .form-group
+      label(for='model_name') Model
+      input#model.form-control(type='text' name='model_name' placeholder='Model' value=(watch ? '#{watch.model_name}' : ''))
+    .form-group
+      label(for='price') Price
+      input#model.form-control(type='number' name='price' placeholder='Price' min="0.01" step="0.01" max='1000000' value=(watch ? '#{watch.price}' : ''))
+    .checkbox
+      label
+        if watch && watch.auction
+          input(type='checkbox' name='auction' checked)
+        else  
+          input(type='checkbox' name='auction')
+        | Include Auction Prices?
+        
+    .radio
+      label
+        if watch && watch.state == 'used'
+          input#optionsRadios1(type='radio' name='state' value='used' checked)
+        else 
+          input#optionsRadios1(type='radio' name='state' value='used')
+        Option Used
+    .radio
+      label
+        if watch && watch.state == 'new'
+          input#optionsRadios2(type='radio' name='state' value='new' checked)
+        else 
+          input#optionsRadios2(type='radio' name='state' value='new')
+        Option New
+    .radio
+      label
+        if watch && watch.state == 'new_used'
+          input#optionsRadios3(type='radio' name='state' value='new_used' checked)
+        else
+          input#optionsRadios3(type='radio'   name='state' value='new_used')
+        Option New & Used
+          
+    button.btn.btn-default(type='submit') Submit
