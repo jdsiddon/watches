@@ -59,12 +59,8 @@ router.post('/create', function(req, res, next) {
         });
 
       } else {            // Update watch.
-        watch.update(req.body, function(err, watch) {
-          console.log('watch');
-          console.log(watch);
-
-          // if(err) return next(err);
-          // res.render('watches/index', { flash: { type: 'alert-success', messages: [ { msg: 'No errors!' }]}});
+        watch.update(req.body, function(err, watch) { 
+          req.flash('success', 'Updated watch');
           res.redirect('/watches');
         });
       }
