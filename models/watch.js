@@ -15,8 +15,7 @@ var WatchSchema = Schema({
     required: true
   },
   auction: {
-    type: Boolean,
-    required: true
+    type: Boolean
   },
   state: {
     type: String,
