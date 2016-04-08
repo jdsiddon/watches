@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+if (typeof(PhusionPassenger) !== 'undefined') {
+    PhusionPassenger.configure({ autoInstall: false });
+}
+
 /**
  * Module dependencies.
  */
@@ -25,7 +29,11 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+ if (typeof(PhusionPassenger) !== 'undefined') {
+     server.listen('passenger');
+ } else {
+     server.listen(port);
+ }
 server.on('error', onError);
 server.on('listening', onListening);
 
