@@ -39,7 +39,6 @@ router.post('/create', function(req, res, next) {
   req.checkBody('brand', 'Brand is required').notEmpty();
   req.checkBody('model_name', 'Model is required').notEmpty();
   req.checkBody('price', 'Price is required').notEmpty();
-  req.checkBody('auction', 'Auction is required').notEmpty();
   req.checkBody('state', 'State is required').notEmpty();
 
   // check the validation object for errors
@@ -59,7 +58,7 @@ router.post('/create', function(req, res, next) {
         });
 
       } else {            // Update watch.
-        watch.update(req.body, function(err, watch) { 
+        watch.update(req.body, function(err, watch) {
           req.flash('success', 'Updated watch');
           res.redirect('/watches');
         });
