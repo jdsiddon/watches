@@ -58,6 +58,10 @@ router.post('/create', function(req, res, next) {
         });
 
       } else {            // Update watch.
+        if(!req.body.auction) {
+          req.body.auction = false;
+        }
+
         watch.update(req.body, function(err, watch) {
           req.flash('success', 'Updated watch');
           res.redirect('/watches');
