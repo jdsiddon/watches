@@ -3,8 +3,14 @@ const Schema = mongoose.Schema;
 
 var WatchSchema = new Schema({
   watch: {
-    brand: { type: String },
-    model_name: { type: String }
+    brand: {
+      type: String,
+      required: [true, 'Watch \'Brand\' required']
+    },
+    model_name: {
+      type: String,
+      required: [true, 'Watch \'Model\' required']
+    }
   }
 });
 

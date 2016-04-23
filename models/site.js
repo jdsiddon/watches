@@ -3,10 +3,12 @@ const Schema = mongoose.Schema;
 
 var SiteSchema = Schema({
   name: {
-    type: String
+    type: String,
+    required: [true, 'Site \'Name\' required']
   },
   url: {
-    type: String
+    type: String,
+    required: [true, 'Site \'URL\' required']
   }
 });
 

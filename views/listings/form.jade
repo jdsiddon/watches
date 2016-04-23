@@ -9,11 +9,11 @@ block content
         
     .form-group
       label(for='watch[brand]') Watch Brand
-      input#brand.form-control(type='text' name='watch[brand]' placeholder='Brand' value=(listing ? '#{listing.watch[0].brand}' : ''))
+      input#brand.form-control(type='text' name='watch[brand]' placeholder='Brand' value=(listing ? '#{listing.watch.brand}' : ''))
       
     .form-group
       label(for='watch[model_name]') Watch Model
-      input#model.form-control(type='text' name='watch[model_name]' placeholder='Model' value=(listing ? '#{listing.watch[0].model_name}' : ''))
+      input#model.form-control(type='text' name='watch[model_name]' placeholder='Model' value=(listing ? '#{listing.watch.model_name}' : ''))
         
     .form-group
       label(for='price') Watch Price

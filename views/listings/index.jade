@@ -14,8 +14,8 @@ block content
       th 
     each listing in listings
       tr
-        td #{listing.watch[0].brand}
-        td #{listing.watch[0].model_name}
+        td #{listing.watch.brand}
+        td #{listing.watch.model_name}
         td #{listing.price}
         td #{listing.type}
         td #{listing.state}
@@ -23,5 +23,5 @@ block content
           a(href='http://#{listing.url}' target='_blank') Go To
         td 
           a(href='listings/edit/#{listing.id}') Edit
-  
+    
   a.btn.btn-default(type='button' href='listings/new') New Listing

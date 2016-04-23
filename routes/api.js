@@ -2,9 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Listing = mongoose.model('Listing');
+const Site = mongoose.model('Site');
 
 /* Get all current listings. */
-router.get('/', function(req, res, next) {
+router.get('/listings', function(req, res, next) {
   Listing.find(function(err, listings) {
     if(err) {
       res.json({
@@ -23,13 +24,21 @@ router.get('/', function(req, res, next) {
 
 
 /* Create new listing. */
-router.post('/create', function(req, res, next) {
+router.post('/listing/create', function(req, res, next) {
   listing = Listing.create(req.body, function(err, listing) {
     if(err) {
+      console.log(err);
+      var simpleErr = new Array();
+
+      for (var prop in err.errors) {
+        simpleErr.push(err.errors[prop].message);
+      }
+
       res.json({
         success: 'false',
-        message: err
+        message: simpleErr
       });
+      return;
     }
     res.json({
       success: 'true',
@@ -41,7 +50,7 @@ router.post('/create', function(req, res, next) {
 
 
 /* Edit listing */
-router.put('/update/:id', function(req, res, next) {
+router.put('/listing/update/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
     if(err) {
       res.json({
@@ -58,19 +67,111 @@ router.put('/update/:id', function(req, res, next) {
 });
 
 /* Edit listing */
-router.delete('/delete/:id', function(req, res, next) {
+router.delete('/listing/delete/:id', function(req, res, next) {
+
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
+    listing.remove(function(err, result) {
+      if(err) {
+        res.json({
+          success: 'false',
+          message: err
+        });
+      }
+
+      res.json({
+        success: 'true',
+        message: result,
+        success: listing
+      });
+    })
+  });
+});
+
+//// Sites
+
+/* Get all current sites. */
+router.get('/sites', function(req, res, next) {
+  Site.find(function(err, sites) {
     if(err) {
       res.json({
         success: 'false',
         message: err
       });
     }
+
     res.json({
       success: 'true',
-      message: 'successfully deleted listing',
-      success: listing
+      message: 'success',
+      sites: sites
     });
+  })
+});
+
+
+/* Create new site. */
+router.post('/site/create', function(req, res, next) {
+  site = Site.create(req.body, function(err, site) {
+    if(err) {
+      console.log(err);
+      var simpleErr = new Array();
+
+      for (var prop in err.errors) {
+        simpleErr.push(err.errors[prop].message);
+      }
+
+      res.json({
+        success: 'false',
+        message: simpleErr
+      });
+      return;
+    }
+    res.json({
+      success: 'true',
+      message: 'success',
+      site: site
+    });
+  });
+});
+
+
+/* Edit site */
+router.put('/site/update/:id', function(req, res, next) {
+  site = Site.findById(req.params.id, function(err, site) {      // Find the site.
+    site.update(req.body, function(err, site) {
+      if(err) {
+        res.json({
+          success: 'false',
+          failure: err
+        });
+      }
+
+      res.json({
+        success: 'true',
+        message: 'successfully updated site',
+        site: site
+      });
+
+    });
+  });
+});
+
+/* Edit site */
+router.delete('/site/delete/:id', function(req, res, next) {
+  site = Site.findById(req.params.id, function(err, site) {
+    site.remove(function(err, result) {
+      if(err) {
+        res.json({
+          success: 'false',
+          message: err
+        });
+      }
+
+      res.json({
+        success: 'true',
+        message: result,
+        success: site
+      });
+    })
   });
 });
 

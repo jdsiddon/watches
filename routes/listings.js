@@ -14,6 +14,7 @@ router.get('/', function(req, res, next) {
   })
 });
 
+
 // New listing form
 router.get('/new', function(req, res, next) {
   res.render('listings/form', {
@@ -26,24 +27,30 @@ router.get('/new', function(req, res, next) {
 router.get('/edit/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
 
-    // date = moment(listing.date);
-    // listing.date = date.format("M/D/YYYY");
-    //
-    // console.log(date.format("M/D/YYYY"));
+  // Listing.findById(req.params.id)
+      // .populate('_site')
+      // .exec(function (err, listing) {
+        if (err) return handleError(err);
+        console.log('The site is %s', listing._site);
+        // prints "The creator is Aaron"
+        res.render('listings/form', {
+          title: 'Update',
+          listing: listing
+        });
 
-    res.render('listings/form', {
-      title: 'Update',
-      listing: listing
-    });
+      // });
   });
 });
 
 
 // Create listing
 router.post('/create', function(req, res, next) {
+  req.body._site = '571bf12e06f0c9c109723160';
+  console.log(req.body);
 
   listing = Listing.create(req.body, function(err, listing) {
     if(err) {
+      console.log(err);
       return next(err);
     }
     req.flash('success', 'New listing created');
