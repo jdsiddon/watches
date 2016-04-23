@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const Watch = mongoose.model('Watch');
+const Listing = mongoose.model('Listing');
 
-/* GET watch main page. */
+/* GET listings main page. */
 router.get('/', function(req, res, next) {
   Watch.find(function(err, watches) {
     res.render('watches/index', {

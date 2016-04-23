@@ -1,0 +1,54 @@
+block content
+  include ../error
+  
+  h1= title
+  
+  form(action='/listings/create' method='post')
+    if listing
+      input#id(type='hidden' name='id' value='#{listing.id}')
+        
+    .form-group
+      label(for='watch[brand]') Watch Brand
+      input#brand.form-control(type='text' name='watch[brand]' placeholder='Brand' value=(listing ? '#{listing.watch[0].brand}' : ''))
+      
+    .form-group
+      label(for='watch[model_name]') Watch Model
+      input#model.form-control(type='text' name='watch[model_name]' placeholder='Model' value=(listing ? '#{listing.watch[0].model_name}' : ''))
+        
+    .form-group
+      label(for='price') Watch Price
+      input#price.form-control(type='number' name='price' placeholder='Price' min="0.01" step="0.01" max='1000000' value=(listing ? '#{listing.price}' : ''))
+    
+    .form-group
+      .input-group.date#datetimepicker1
+        input#date.form-control(type='text' name='date' value=(listing ? '#{listing.date}' : ''))
+        span.input-group-addon
+          span.glyphicon.glyphicon-calendar
+    
+    .form-group
+      label(for='url') Listing Url
+      input#model.form-control(type='text' name='url' placeholder='URL')
+    
+    .form-group
+      label(for='type') Type     
+        select.form-control(name='type')
+          option(value='Auction') Auction
+          option(value='Purchase') Purchase
+    
+    .radio
+      label
+        if listing && listing.state == 'Used'
+          input#optionsRadios1(type='radio' name='state' value='Used' checked)
+        else 
+          input#optionsRadios1(type='radio' name='state' value='Used')
+        Option Used
+    .radio
+      label
+        if listing && listing.state == 'New'
+          input#optionsRadios2(type='radio' name='state' value='New' checked)
+        else 
+          input#optionsRadios2(type='radio' name='state' value='New')
+        Option New
+    
+          
+    button.btn.btn-default(type='submit') Submit
