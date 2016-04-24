@@ -17,6 +17,10 @@ Source - Place the watch is listed
 - Has many watches
 - URL
 
+su - watches
+cd to /var/www/watches/code
+git pull origin master
+passenger-config restart-app $(pwd)
 
 *** Tests
 
@@ -24,7 +28,7 @@ Source - Place the watch is listed
 curl localhost:3000/api/sites
 
 *** Create Site (POST)
-curl --data "name=testing website&url=www.testingsite.com" localhost:3000/api/site/create
+curl --data "name=testing website&url=www.testingsite.com" http://52.11.61.145/api/site/create
 
 *** Update Site Name (PUT)
 curl -X PUT -d name='Update Name' localhost:3000/api/site/update/571be544ea5edb6d062c474c

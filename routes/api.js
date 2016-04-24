@@ -98,6 +98,8 @@ router.put('/listing/update/:id', function(req, res, next) {
 router.delete('/listing/delete/:id', function(req, res, next) {
 
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
+    if(err) res.json({ success: 'false', failure: err });
+    
     listing.remove(function(err, result) {
       if(err) {
         res.json({
@@ -166,6 +168,8 @@ router.post('/site/create', function(req, res, next) {
 /* Edit site */
 router.put('/site/update/:id', function(req, res, next) {
   site = Site.findById(req.params.id, function(err, site) {      // Find the site.
+    if(err) res.json({ success: 'false', failure: err });
+
     site.update(req.body, function(err, site) {
       if(err) {
         res.json({
@@ -187,6 +191,8 @@ router.put('/site/update/:id', function(req, res, next) {
 /* Edit site */
 router.delete('/site/delete/:id', function(req, res, next) {
   site = Site.findById(req.params.id, function(err, site) {
+    if(err) res.json({ success: 'false', failure: err });
+
     listings = Listing.remove({_site: req.params.id}, function(err, listings) {
       site.remove(function(err, result) {
         if(err) {
