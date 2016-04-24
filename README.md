@@ -17,6 +17,7 @@ Source - Place the watch is listed
 - Has many watches
 - URL
 
+https://www.phusionpassenger.com/library/walkthroughs/deploy/nodejs/ownserver/nginx/oss/trusty/deploy_app.html
 su - watches
 cd to /var/www/watches/code
 git pull origin master

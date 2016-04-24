@@ -66,30 +66,29 @@ router.post('/listing/create', function(req, res, next) {
 /* Edit listing */
 router.put('/listing/update/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
-    if(err) {
-      res.json({
-        success: 'false',
-        failure: err
-      });
-    }
-
-    if(req.body.site) {     // If user provided a site, link the site up.
-      Site.findById(req.body.site, function(err, site) {
-        listing._site = site._id;    // Connect the site to the listing.
-        listing.save(function(err, listing) {
-          res.json({
-            success: 'true',
-            message: 'success',
-            listing: listing
-          });
-        })
-      })
+    if(err || !listing) {
+      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
     } else {
-      res.json({
-        success: 'true',
-        message: 'success',
-        listing: listing
-      });
+
+      if(req.body.site) {     // If user provided a site, link the site up.
+        Site.findById(req.body.site, function(err, site) {
+          listing._site = site._id;    // Connect the site to the listing.
+          listing.save(function(err, listing) {
+            res.json({
+              success: 'true',
+              message: 'success',
+              listing: listing
+            });
+          })
+        })
+      } else {
+        res.json({
+          success: 'true',
+          message: 'success',
+          listing: listing
+        });
+      }
+
     }
   });
 });
@@ -98,22 +97,26 @@ router.put('/listing/update/:id', function(req, res, next) {
 router.delete('/listing/delete/:id', function(req, res, next) {
 
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
-    if(err) res.json({ success: 'false', failure: err });
-    
-    listing.remove(function(err, result) {
-      if(err) {
-        res.json({
-          success: 'false',
-          message: err
-        });
-      }
+    if(err || !listing) {
+      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
+    } else {
 
-      res.json({
-        success: 'true',
-        message: result,
-        success: listing
+      listing.remove(function(err, result) {
+        if(err) {
+          res.json({
+            success: 'false',
+            message: err
+          });
+        }
+
+        res.json({
+          success: 'true',
+          message: result,
+          success: listing
+        });
       });
-    })
+
+    }
   });
 });
 
@@ -168,48 +171,55 @@ router.post('/site/create', function(req, res, next) {
 /* Edit site */
 router.put('/site/update/:id', function(req, res, next) {
   site = Site.findById(req.params.id, function(err, site) {      // Find the site.
-    if(err) res.json({ success: 'false', failure: err });
+    if(err || !site) {
+      res.json({ success: 'false', failure: (err ? err : 'site not found') });
+    } else {
 
-    site.update(req.body, function(err, site) {
-      if(err) {
-        res.json({
-          success: 'false',
-          failure: err
-        });
-      }
-
-      res.json({
-        success: 'true',
-        message: 'successfully updated site',
-        site: site
-      });
-
-    });
-  });
-});
-
-/* Edit site */
-router.delete('/site/delete/:id', function(req, res, next) {
-  site = Site.findById(req.params.id, function(err, site) {
-    if(err) res.json({ success: 'false', failure: err });
-
-    listings = Listing.remove({_site: req.params.id}, function(err, listings) {
-      site.remove(function(err, result) {
+      site.update(req.body, function(err, site) {
         if(err) {
           res.json({
             success: 'false',
-            message: err
+            failure: err
           });
         }
 
         res.json({
           success: 'true',
-          message: result,
-          success: site
+          message: 'successfully updated site',
+          site: site
         });
-      })
 
-    })
+      });
+    }
+  })
+});
+
+
+/* Edit site */
+router.delete('/site/delete/:id', function(req, res, next) {
+  site = Site.findById(req.params.id, function(err, site) {
+    if(err || !site) {
+      res.json({ success: 'false', failure: (err ? err : 'site not found') });
+    } else {
+
+      listings = Listing.remove({_site: req.params.id}, function(err, listings) {
+        site.remove(function(err, result) {
+          if(err) {
+            res.json({
+              success: 'false',
+              message: err
+            });
+          }
+
+          res.json({
+            success: 'true',
+            message: result,
+            success: site
+          });
+        })
+      });
+
+    }
 
   });
 });
