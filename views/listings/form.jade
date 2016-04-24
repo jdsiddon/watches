@@ -30,6 +30,12 @@ block content
       input#model.form-control(type='text' name='url' placeholder='URL')
     
     .form-group
+      label(for='site') Site
+      select.form-control(name='site')
+        each site in sites
+          option(value='#{site._id}') #{site.name}
+    
+    .form-group
       label(for='type') Type     
         select.form-control(name='type')
           option(value='Auction') Auction
