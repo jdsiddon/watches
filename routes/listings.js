@@ -31,23 +31,22 @@ router.get('/new', function(req, res, next) {
   })
 });
 
+
 // Edit listing
 router.get('/edit/:id', function(req, res, next) {
-  listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
-
-  // Listing.findById(req.params.id)
-      // .populate('_site')
-      // .exec(function (err, listing) {
-        if (err) return handleError(err);
-        console.log('The site is %s', listing._site);
-        // prints "The creator is Aaron"
+  Listing
+    .findById(req.params.id)
+    .populate('_site')
+    .exec(function(err, listing) {
+      Site.find(function(err, sites) {
+        console.log(listing);
         res.render('listings/form', {
           title: 'Update',
-          listing: listing
+          listing: listing,
+          sites: sites
         });
-
-      // });
-  });
+      })
+    });
 });
 
 
@@ -65,12 +64,7 @@ router.post('/create', function(req, res, next) {
       req.flash('success', 'New listing created');
       res.redirect('/listings');
     });
-
-
-
   })
-
-
 
 });
 

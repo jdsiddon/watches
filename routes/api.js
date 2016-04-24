@@ -40,11 +40,25 @@ router.post('/listing/create', function(req, res, next) {
       });
       return;
     }
-    res.json({
-      success: 'true',
-      message: 'success',
-      listing: listing
-    });
+
+    if(req.body.site) {     // If user provided a site, link the site up.
+      Site.findById(req.body.site, function(err, site) {
+        listing._site = site._id;    // Connect the site to the listing.
+        listing.save(function(err, listing) {
+          res.json({
+            success: 'true',
+            message: 'success',
+            listing: listing
+          });
+        })
+      })
+    } else {
+      res.json({
+        success: 'true',
+        message: 'success',
+        listing: listing
+      });
+    }
   });
 });
 
@@ -58,11 +72,25 @@ router.put('/listing/update/:id', function(req, res, next) {
         failure: err
       });
     }
-    res.json({
-      success: 'true',
-      message: 'successfully updated listing',
-      listing: listing
-    });
+
+    if(req.body.site) {     // If user provided a site, link the site up.
+      Site.findById(req.body.site, function(err, site) {
+        listing._site = site._id;    // Connect the site to the listing.
+        listing.save(function(err, listing) {
+          res.json({
+            success: 'true',
+            message: 'success',
+            listing: listing
+          });
+        })
+      })
+    } else {
+      res.json({
+        success: 'true',
+        message: 'success',
+        listing: listing
+      });
+    }
   });
 });
 
@@ -86,6 +114,7 @@ router.delete('/listing/delete/:id', function(req, res, next) {
     })
   });
 });
+
 
 //// Sites
 
@@ -158,20 +187,24 @@ router.put('/site/update/:id', function(req, res, next) {
 /* Edit site */
 router.delete('/site/delete/:id', function(req, res, next) {
   site = Site.findById(req.params.id, function(err, site) {
-    site.remove(function(err, result) {
-      if(err) {
-        res.json({
-          success: 'false',
-          message: err
-        });
-      }
+    listings = Listing.remove({_site: req.params.id}, function(err, listings) {
+      site.remove(function(err, result) {
+        if(err) {
+          res.json({
+            success: 'false',
+            message: err
+          });
+        }
 
-      res.json({
-        success: 'true',
-        message: result,
-        success: site
-      });
+        res.json({
+          success: 'true',
+          message: result,
+          success: site
+        });
+      })
+
     })
+
   });
 });
 

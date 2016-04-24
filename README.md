@@ -42,8 +42,13 @@ curl --data "watch[brand]=rol&watch[model_name]=sub&price=2.99&date=2/2/14&url=w
 *** Update Listing Price (PUT)
 curl -X PUT -d price='3.56' localhost:3000/api/listing/update/571be809b86eb1220795673d
 
+
 *** Delete Listing (DELETE)
 curl -X "DELETE" localhost:3000/api/listing/delete/571be544ea5edb6d062c474c
 
 
 *** Connect Listing to Site
+curl -X PUT -d site='571c86236b76dee7311bc85c' localhost:3000/api/listing/update/571c8e2ad30a0a5b3d4d83d0
+
+Result:
+{"success":"true","message":"success","listing":{"_id":"571c8e2ad30a0a5b3d4d83d0","price":2.99,"date":"2014-02-20T08:00:00.000Z","url":"www.ebay.com/item/123","type":"Auction","state":"New","__v":0,"_site":"571c86236b76dee7311bc85c","watch":{"brand":"rol","model_name":"sub"}}}%

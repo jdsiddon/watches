@@ -20,7 +20,7 @@ block content
         td #{listing.price}
         td #{listing.state}
         td #{listing.type}
-        td #{listing._site.name}
+        td #{(listing._site ? listing._site.name : '')}
         td 
           a(href='http://#{listing.url}' target='_blank') Go To
         td 

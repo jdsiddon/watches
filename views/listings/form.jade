@@ -27,7 +27,7 @@ block content
     
     .form-group
       label(for='url') Listing Url
-      input#model.form-control(type='text' name='url' placeholder='URL')
+      input#model.form-control(type='text' name='url' placeholder='URL' value=(listing ? '#{listing.url}' : ''))
     
     .form-group
       label(for='site') Site
