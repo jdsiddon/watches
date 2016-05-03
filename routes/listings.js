@@ -4,6 +4,14 @@ const moment = require('moment');
 const router = express.Router();
 const Listing = mongoose.model('Listing');
 const Site = mongoose.model('Site');
+const fs = require('fs');
+const multer = require('multer');
+
+// Stores images attached in public folder.
+var upload = multer({
+  dest: 'public/uploads',
+  limits: { fileSize: 1000000, files: 1 }
+});
 
 /* GET listings main page. */
 router.get('/', function(req, res, next) {
@@ -51,12 +59,22 @@ router.get('/edit/:id', function(req, res, next) {
 
 
 // Create listing
-router.post('/create', function(req, res, next) {
+router.post('/create', upload.single('image'), function(req, res, next) {
   Site.findById(req.body.site, function(err, site) {
 
-    req.body._site = site._id;    // Connect the site to the listing.
+    var list = new Listing;
 
-    listing = Listing.create(req.body, function(err, listing) {
+    list._site = site._id;
+    list.price = req.body.price;
+    list.date = req.body.date;
+    list.url = req.body.url;
+    list.type = req.body.type;
+    list.state = req.body.state;
+    list.img = req.file.path;
+    list.watch.brand = req.body.watch.brand;
+    list.watch.model_name = req.body.watch.model_name;
+
+    listing = Listing.create(list, function(err, listing) {
       if(err) {
         console.log(err);
         return next(err);

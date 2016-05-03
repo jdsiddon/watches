@@ -3,6 +3,13 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Listing = mongoose.model('Listing');
 const Site = mongoose.model('Site');
+const multer = require('multer');
+
+// Stores images attached in public folder.
+var upload = multer({
+  dest: 'public/uploads',
+  limits: { fileSize: 1000000, files: 1 }
+});
 
 /* Get all current listings. */
 router.get('/listings', function(req, res, next) {
@@ -24,7 +31,10 @@ router.get('/listings', function(req, res, next) {
 
 
 /* Create new listing. */
-router.post('/listing/create', function(req, res, next) {
+router.post('/listing/create', upload.single('image'), function(req, res, next) {
+
+  req.body.img = req.file.path;     // Get image path.
+  
   listing = Listing.create(req.body, function(err, listing) {
     if(err) {
       console.log(err);

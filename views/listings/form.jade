@@ -3,9 +3,13 @@ block content
   
   h1= title
   
-  form(action='/listings/create' method='post')
+  form(action='/listings/create' method='post' enctype='multipart/form-data')
     if listing
       input#id(type='hidden' name='id' value='#{listing.id}')
+    
+    .form-group
+      label(for='image') Image
+      input#image(type='file' name='image')
         
     .form-group
       label(for='watch[brand]') Watch Brand

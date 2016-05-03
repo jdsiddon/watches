@@ -4,6 +4,9 @@ const moment = require('moment');
 const siteSchema = require('./site');
 
 var ListingSchema = new Schema({
+  img: {
+    type: String
+  },
   watch: {
     brand: {
       type: String,
