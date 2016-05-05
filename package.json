@@ -18,6 +18,8 @@
     "mongoose": "^4.4.11",
     "morgan": "~1.6.1",
     "multer": "^1.1.0",
-    "serve-favicon": "~2.3.0"
+    "node-base64-image": "^0.1.2",
+    "serve-favicon": "~2.3.0",
+    "shortid": "^2.2.6"
   }
 }

@@ -46,7 +46,7 @@ var ListingSchema = new Schema({
 });
 
 ListingSchema.pre('save', function(next) {
-  this.date = moment(this.date, "M/D/YYYY");                // Clean moment.
+  this.date = moment(this.date, "M/D/YYYY");                // Clean moment.''
   next();
 });
 

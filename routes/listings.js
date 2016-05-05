@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
     .find()
     .populate('_site')
     .exec(function(err, listings) {
-      console.log(listings);
+      // console.log(listings);
       res.render('listings/index', {
         title: 'Your Current Listings',
         listings: listings
@@ -60,6 +60,8 @@ router.get('/edit/:id', function(req, res, next) {
 
 // Create listing
 router.post('/create', upload.single('image'), function(req, res, next) {
+  console.log(req.body);
+
   Site.findById(req.body.site, function(err, site) {
 
     var list = new Listing;
@@ -70,7 +72,7 @@ router.post('/create', upload.single('image'), function(req, res, next) {
     list.url = req.body.url;
     list.type = req.body.type;
     list.state = req.body.state;
-    list.img = req.file.path;
+    list.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;                  // /uploads/[IMG_NAME]
     list.watch.brand = req.body.watch.brand;
     list.watch.model_name = req.body.watch.model_name;
 

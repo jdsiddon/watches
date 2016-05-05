@@ -55,5 +55,10 @@ curl -X "DELETE" localhost:3000/api/listing/delete/571be544ea5edb6d062c474c
 *** Connect Listing to Site
 curl -X PUT -d site='571c86236b76dee7311bc85c' localhost:3000/api/listing/update/571c8e2ad30a0a5b3d4d83d0
 
+
+*** Post new listing with image to API.
+curl -v -F watch[brand]=rol -F watch[model_name]=sub -F price=2.99 -F date=2/2/14 -F url=www.ebay.com/item/123567 -F type=Auction -F state=New -F image=@/Users/justin/Desktop/RCA_Indian_Head_test_pattern.JPG localhost:3000/api/listing/create
+
+
 Result:
 {"success":"true","message":"success","listing":{"_id":"571c8e2ad30a0a5b3d4d83d0","price":2.99,"date":"2014-02-20T08:00:00.000Z","url":"www.ebay.com/item/123","type":"Auction","state":"New","__v":0,"_site":"571c86236b76dee7311bc85c","watch":{"brand":"rol","model_name":"sub"}}}%

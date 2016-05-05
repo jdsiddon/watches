@@ -5,6 +5,7 @@ block content
   
   table.table.table-hover
     tr
+      th
       th Brand
       th Model
       th Price
@@ -15,6 +16,8 @@ block content
       th 
     each listing in listings
       tr
+        td 
+          img.thumbnail(src="#{listing.img}" width="120px") 
         td #{listing.watch.brand}
         td #{listing.watch.model_name}
         td #{listing.price}
