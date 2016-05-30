@@ -6,8 +6,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const session = require('express-session');
 const expressValidator = require('express-validator');
+const passport = require('passport');
+const Strategy = require('passport-local').Strategy;
+
 
 // Database
 mongoose.connect('mongodb://localhost/watches');
@@ -19,6 +21,46 @@ db.once('open', function() {
   // Connected!
   console.log('Connected!');
 })
+
+const User = mongoose.model('User');
+
+// Set up passport
+passport.use(new Strategy(
+  function(username, password, cb) {
+    console.log(username, password);
+
+    User.find({ username: username }, function(err, user) {
+      console.log(user);
+      // if(err) {
+      //   console.log(err);
+      //   return cb(err);
+      // }
+      // if(!user) {
+      //   console.log("null");
+      //   return cb(null, false);
+      // }
+      // if(user.password != password) {
+      //   console.log("bad pw");
+      //   return cb(null, false);
+      // }
+      // console.log(user);
+      // return cb(null, user);
+    })
+  }
+));
+
+// Configure Passport authenticated session persistence.
+// passport.serializeUser(function(user, cb) {
+//   cb(null, user.id);
+// });
+//
+// passport.deserializeUser(function(id, cb) {
+//   db.users.findById(id, function (err, user) {
+//     if (err) { return cb(err); }
+//     cb(null, user);
+//   });
+// });
+
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
@@ -40,12 +82,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator()); // this line must be immediately after express.bodyParser()!
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
+app.use(require('express-session')({
   secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  saveUninitialized: false
 }));
+
+// Initialize passport session.
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set up flash messages.
 app.use(flash());

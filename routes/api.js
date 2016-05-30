@@ -37,7 +37,6 @@ router.get('/listings', function(req, res, next) {
 router.post('/listing/create', upload.single('image'), (req, res, next) => {
   // Write image to file.
 
-
   console.log(__dirname);
   var imageName = shortid.generate();
 
