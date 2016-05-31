@@ -4,7 +4,7 @@ block content
   h1= title
   p Welcome to #{title}
   
-  table.table.table-hover
+  table.table
     tr
       th Brand
       th Model
@@ -12,14 +12,15 @@ block content
       th State
       th Auction
       th 
-    each watch in watches
-      tr
-        td #{watch.brand}
-        td #{watch.model_name}
-        td #{watch.price}
-        td #{watch.state}
-        td #{watch.auction ? 'Yes' : 'No'}
-        td 
-          a(href='watches/edit/#{watch.id}') Edit
+    tbody.table-hover
+      each watch in watches
+        tr
+          td #{watch.brand}
+          td #{watch.model_name}
+          td #{watch.price}
+          td #{watch.state}
+          td #{watch.auction ? 'Yes' : 'No'}
+          td 
+            a(href='watches/edit/#{watch.id}') Edit
 
   a.btn.btn-lg.btn-default(type='button' href='watches/new') New

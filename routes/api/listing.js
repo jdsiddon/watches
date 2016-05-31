@@ -14,7 +14,8 @@ var upload = multer({
   limits: { fileSize: 1000000, files: 1 }
 });
 
-/* Get all current listings. */
+
+/* Get all Listings. */
 router.get('/listings', function(req, res, next) {
   Listing.find(function(err, listings) {
     if(err) {
@@ -33,10 +34,9 @@ router.get('/listings', function(req, res, next) {
 });
 
 
-/* Create new listing. */
-router.post('/listing/create', upload.single('image'), (req, res, next) => {
+/* Create new Listing. */
+router.post('/listing', upload.single('image'), (req, res, next) => {
   // Write image to file.
-
   console.log(__dirname);
   var imageName = shortid.generate();
 
@@ -105,19 +105,11 @@ router.post('/listing/create', upload.single('image'), (req, res, next) => {
       });
     });
   });
-
-
-  // })
-
-
-
-
-  // req.body.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;   // /uploads/[IMG_NAME]
 });
 
 
-/* Edit listing */
-router.put('/listing/update/:id', function(req, res, next) {
+/* Edit Listing */
+router.put('/listing/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
     if(err || !listing) {
       res.json({ success: 'false', failure: (err ? err : 'listing not found') });
@@ -146,9 +138,8 @@ router.put('/listing/update/:id', function(req, res, next) {
   });
 });
 
-/* Edit listing */
-router.delete('/listing/delete/:id', function(req, res, next) {
-
+/* Delete Listing */
+router.delete('/listing/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
     if(err || !listing) {
       res.json({ success: 'false', failure: (err ? err : 'listing not found') });
@@ -170,110 +161,6 @@ router.delete('/listing/delete/:id', function(req, res, next) {
       });
 
     }
-  });
-});
-
-
-//// Sites
-
-/* Get all current sites. */
-router.get('/sites', function(req, res, next) {
-  Site.find(function(err, sites) {
-    if(err) {
-      res.json({
-        success: 'false',
-        message: err
-      });
-    }
-
-    res.json({
-      success: 'true',
-      message: 'success',
-      sites: sites
-    });
-  })
-});
-
-
-/* Create new site. */
-router.post('/site/create', function(req, res, next) {
-  site = Site.create(req.body, function(err, site) {
-    if(err) {
-      console.log(err);
-      var simpleErr = new Array();
-
-      for (var prop in err.errors) {
-        simpleErr.push(err.errors[prop].message);
-      }
-
-      res.json({
-        success: 'false',
-        message: simpleErr
-      });
-      return;
-    }
-    res.json({
-      success: 'true',
-      message: 'success',
-      site: site
-    });
-  });
-});
-
-
-/* Edit site */
-router.put('/site/update/:id', function(req, res, next) {
-  site = Site.findById(req.params.id, function(err, site) {      // Find the site.
-    if(err || !site) {
-      res.json({ success: 'false', failure: (err ? err : 'site not found') });
-    } else {
-
-      site.update(req.body, function(err, site) {
-        if(err) {
-          res.json({
-            success: 'false',
-            failure: err
-          });
-        }
-
-        res.json({
-          success: 'true',
-          message: 'successfully updated site',
-          site: site
-        });
-
-      });
-    }
-  })
-});
-
-
-/* Edit site */
-router.delete('/site/delete/:id', function(req, res, next) {
-  site = Site.findById(req.params.id, function(err, site) {
-    if(err || !site) {
-      res.json({ success: 'false', failure: (err ? err : 'site not found') });
-    } else {
-
-      listings = Listing.remove({_site: req.params.id}, function(err, listings) {
-        site.remove(function(err, result) {
-          if(err) {
-            res.json({
-              success: 'false',
-              message: err
-            });
-          }
-
-          res.json({
-            success: 'true',
-            message: result,
-            success: site
-          });
-        })
-      });
-
-    }
-
   });
 });
 

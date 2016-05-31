@@ -18,7 +18,10 @@ const routes = require('./routes/index');
 const users = require('./routes/users');
 const watches = require('./routes/watches');
 const listings = require('./routes/listings');
-const api = require('./routes/api');
+
+// API
+const listingApi = require('./routes/api/listing');
+const siteApi = require('./routes/api/site');
 
 const app = express();
 
@@ -65,9 +68,9 @@ app.use('/', routes);             // Unprotected routes.
 // Require Authorization to vist all routes from here on.
 app.use(function(req, res, next) {
   if (req.isAuthenticated() || req.path === '/users/login') {
-    console.log(req.user);
     next();
   } else {
+    console.log(req.path);
     res.redirect("/users/login");
   }
 });
@@ -75,7 +78,10 @@ app.use(function(req, res, next) {
 app.use('/users', users);
 app.use('/watches', watches);
 app.use('/listings', listings);
-app.use('/api', api);
+
+// API Routes
+app.use('/api/listing', listingApi);
+app.use('/api/site', siteApi);
 
 
 // catch 404 and forward to error handler

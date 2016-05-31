@@ -16,9 +16,6 @@ var upload = multer({
 
 /* GET listings main page. */
 router.get('/', function(req, res, next) {
-  console.log(req.isAuthenticated());
-  console.log(req.user);
-
   Listing
     .find({ _user: req.user })           // Only return their own listings.
     .populate('_site')
