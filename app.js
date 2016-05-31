@@ -9,58 +9,10 @@ const mongoose = require('mongoose');
 const expressValidator = require('express-validator');
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
+const expressSession = require('express-session');
 
-
-// Database
-mongoose.connect('mongodb://localhost/watches');
-const db = mongoose.connection;
-const Schemas = require('./models')
-
-db.on('error', console.error.bind(console, 'connection error: '));
-db.once('open', function() {
-  // Connected!
-  console.log('Connected!');
-})
-
-const User = mongoose.model('User');
-
-// Set up passport
-passport.use(new Strategy(
-  function(username, password, cb) {
-    console.log(username, password);
-
-    User.find({ username: username }, function(err, user) {
-      console.log(user);
-      // if(err) {
-      //   console.log(err);
-      //   return cb(err);
-      // }
-      // if(!user) {
-      //   console.log("null");
-      //   return cb(null, false);
-      // }
-      // if(user.password != password) {
-      //   console.log("bad pw");
-      //   return cb(null, false);
-      // }
-      // console.log(user);
-      // return cb(null, user);
-    })
-  }
-));
-
-// Configure Passport authenticated session persistence.
-// passport.serializeUser(function(user, cb) {
-//   cb(null, user.id);
-// });
-//
-// passport.deserializeUser(function(id, cb) {
-//   db.users.findById(id, function (err, user) {
-//     if (err) { return cb(err); }
-//     cb(null, user);
-//   });
-// });
-
+const db = require('./db');       // Database connection information.
+const auth = require('./auth');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
@@ -82,11 +34,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator()); // this line must be immediately after express.bodyParser()!
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('express-session')({
+app.use(expressSession({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false
 }));
+
 
 // Initialize passport session.
 app.use(passport.initialize());
@@ -97,7 +50,28 @@ app.use(flash());
 
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 
-app.use('/', routes);
+
+// Get the user and their authentication status.
+app.use(function(req, res, next) {
+  if(req.user) {
+    res.locals.user = req.user;
+    res.locals.isAuthenticated = req.isAuthenticated();
+  }
+  next();
+});
+
+app.use('/', routes);             // Unprotected routes.
+
+// Require Authorization to vist all routes from here on.
+app.use(function(req, res, next) {
+  if (req.isAuthenticated() || req.path === '/users/login') {
+    console.log(req.user);
+    next();
+  } else {
+    res.redirect("/users/login");
+  }
+});
+
 app.use('/users', users);
 app.use('/watches', watches);
 app.use('/listings', listings);

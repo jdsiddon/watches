@@ -13,11 +13,16 @@ var upload = multer({
   limits: { fileSize: 1000000, files: 1 }
 });
 
+
 /* GET listings main page. */
 router.get('/', function(req, res, next) {
+  console.log(req.isAuthenticated());
+  console.log(req.user);
+
   Listing
-    .find()
+    .find({ _user: req.user })           // Only return their own listings.
     .populate('_site')
+    .populate('_user')
     .exec(function(err, listings) {
       // console.log(listings);
       res.render('listings/index', {
@@ -67,6 +72,7 @@ router.post('/create', upload.single('image'), function(req, res, next) {
     var list = new Listing;
 
     list._site = site._id;
+    list._user = req.user._id;
     list.price = req.body.price;
     list.date = req.body.date;
     list.url = req.body.url;

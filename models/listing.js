@@ -42,8 +42,13 @@ var ListingSchema = new Schema({
   _site: {
     type: Schema.Types.ObjectId,
     ref: 'Site'
+  },
+  _user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
 });
+
 
 ListingSchema.pre('save', function(next) {
   this.date = moment(this.date, "M/D/YYYY");                // Clean moment.''

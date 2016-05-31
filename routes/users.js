@@ -1,15 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-var mongoose = require('mongoose');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const mongoose = require('mongoose');
 const User = mongoose.model('User');
-
-/* GET user login form. */
-router.get('/', function(req, res, next) {
-  res.render('users/login', {
-    title: 'Login'
-  });
-});
 
 /* New user form. */
 router.get('/new', function(req, res, next) {
@@ -28,11 +21,23 @@ router.post('/new', function(req, res, next) {
   })
 });
 
+router.get('/logout', function(req, req) {
+  req.logout();
+  res.redirect('/');
+})
 
-// Login route
+router.get('/login', function(req, res, next) {
+  res.render('users/login', {
+    title: 'Login'
+  });
+});
+
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
+    console.log(req.session);
+    console.log(req.user);
+    console.log(req.isAuthenticated());
     res.redirect('/');
   }
 );
