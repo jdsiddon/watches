@@ -7,6 +7,7 @@ const multer = require('multer');
 const shortid = require('shortid');
 const fs = require('fs');
 const path = require('path');
+const passport = require('passport');
 
 // Stores images attached in public folder.
 var upload = multer({
@@ -16,7 +17,7 @@ var upload = multer({
 
 
 /* Get all Listings. */
-router.get('/listings', function(req, res, next) {
+router.get('/', function(req, res, next) {
   Listing.find(function(err, listings) {
     if(err) {
       res.json({
@@ -35,50 +36,65 @@ router.get('/listings', function(req, res, next) {
 
 
 /* Create new Listing. */
-router.post('/listing', upload.single('image'), (req, res, next) => {
-  // Write image to file.
-  console.log(__dirname);
-  var imageName = shortid.generate();
+router.post('/',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  upload.single('image'),
+  (req, res, next) => {
+    // Write image to file.
+    console.log(__dirname);
+    var imageName = shortid.generate();
 
-  // => [Error: EISDIR: illegal operation on a directory, open <directory>]
-  fs.writeFile(imageName, new Buffer(req.body.img, 'base64'), (err) => {
-    var newListing = req.body;
+    // => [Error: EISDIR: illegal operation on a directory, open <directory>]
+    fs.writeFile(imageName, new Buffer(req.body.img, 'base64'), (err) => {
+      var newListing = req.body;
+      req.body._user = req.user._id;
 
+      var oldPath = process.cwd() + '/' + imageName;
+      var newPath = process.cwd() + '/public/uploads/' + imageName;
 
-    var oldPath = process.cwd() + '/' + imageName;
-    var newPath = process.cwd() + '/public/uploads/' + imageName;
+      fs.renameSync(oldPath, newPath);
+      newListing.img = '/uploads/' + imageName;     // Link image up.
 
-    fs.renameSync(oldPath, newPath);
-    newListing.img = '/uploads/' + imageName;     // Link image up.
+      // Now create the listing.
+      Listing.create(req.body, function(err, listing) {
+        if(err) {         // Validation messages.
+          console.log(err);
+          var simpleErr = new Array();
 
-    // Now create the listing.
-    Listing.create(req.body, function(err, listing) {
-      if(err) {         // Validation messages.
-        console.log(err);
-        var simpleErr = new Array();
+          for (var prop in err.errors) {
+            simpleErr.push(err.errors[prop].message);
+          }
 
-        for (var prop in err.errors) {
-          simpleErr.push(err.errors[prop].message);
+          res.json({
+            success: 'false',
+            message: simpleErr
+          });
+          return;
         }
 
-        res.json({
-          success: 'false',
-          message: simpleErr
-        });
-        return;
-      }
+        // Link up the site.
+        Site.findOne({"name": req.body.site}, function(err, site) {
+          console.log(site);
 
-      // Link up the site.
-      Site.findOne({"name": req.body.site}, function(err, site) {
-        console.log(site);
+          if(!site) {     // No site was found so create a new one.
+            var newSite = {};
+            newSite.name = req.body.site;
+            newSite.url = "http://www." + req.body.site + ".com";
 
-        if(!site) {     // No site was found so create a new one.
-          var newSite = {};
-          newSite.name = req.body.site;
-          newSite.url = "http://www." + req.body.site + ".com";
+            Site.create(newSite, function(err, site) {
+              newListing.site = site.id;
 
-          Site.create(newSite, function(err, site) {
-            newListing.site = site.id;
+              listing._site = site._id;    // Connect the site to the listing.
+              listing.save(function(err, listing) {
+                res.json({
+                  success: 'true',
+                  message: 'success',
+                  listing: listing
+                });
+              });
+
+            });
+          } else {
 
             listing._site = site._id;    // Connect the site to the listing.
             listing.save(function(err, listing) {
@@ -88,28 +104,16 @@ router.post('/listing', upload.single('image'), (req, res, next) => {
                 listing: listing
               });
             });
+          }
 
-          });
-        } else {
-
-          listing._site = site._id;    // Connect the site to the listing.
-          listing.save(function(err, listing) {
-            res.json({
-              success: 'true',
-              message: 'success',
-              listing: listing
-            });
-          });
-        }
-
+        });
       });
     });
-  });
 });
 
 
 /* Edit Listing */
-router.put('/listing/:id', function(req, res, next) {
+router.put('/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
     if(err || !listing) {
       res.json({ success: 'false', failure: (err ? err : 'listing not found') });
@@ -139,7 +143,7 @@ router.put('/listing/:id', function(req, res, next) {
 });
 
 /* Delete Listing */
-router.delete('/listing/:id', function(req, res, next) {
+router.delete('/:id', function(req, res, next) {
   listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
     if(err || !listing) {
       res.json({ success: 'false', failure: (err ? err : 'listing not found') });

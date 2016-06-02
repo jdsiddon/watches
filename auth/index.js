@@ -3,6 +3,7 @@ const expressValidator = require('express-validator');
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const User = mongoose.model('User');
+const passwordHash = require('password-hash');
 
 // Set up passport
 passport.use(new Strategy(
@@ -12,7 +13,7 @@ passport.use(new Strategy(
       if(!user) {
         return done(null, false, { message: "Incorrect Username" });
       }
-      if(user.password != password) {
+      if(!passwordHash.verify(password, user.password)) {    // Passwords don't match :(
         return done(null, false, { message: "Incorrect Password" });
       }
       console.log(username, password);

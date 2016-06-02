@@ -1,9 +1,13 @@
-form(action="new" method="post")
-  div
-    label Username:
-    input(type="text" name="username")
-  div
-    label Password:
-    input(type="password" name="password")  
-  div
-    input(type="submit" value="Create")
+extends ../layout
+
+block content
+  div.col-md-offset-4.col-md-4
+    form(action="new" method="post")
+      div.form-group
+        label Username:
+        input.form-control(type="text" name="username")
+      div.form-group
+        label Password:
+        input.form-control(type="password" name="password")  
+      div.form-group
+        input.btn.btn-primary(type="submit" value="Create")

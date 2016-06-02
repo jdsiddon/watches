@@ -15,17 +15,19 @@ router.get('/new', function(req, res, next) {
 router.post('/new', function(req, res, next) {
   console.log(req.body);
   user = User.create(req.body, function(err, user) {
-    res.render('users/login', {
-      title: 'Login'
-    });
-  })
+    if(err) {
+      res.render('/users/new');
+    }
+
+    res.redirect('login');
+  });
 });
 
 /* Logout user. */
 router.get('/logout', function(req, res, next) {
   console.log('logging out');
   req.session.destroy(function (err) {
-    res.redirect('/'); //Inside a callback… bulletproof!
+    res.redirect('/users/login');    //Inside a callback… bulletproof!
   });
 });
 
@@ -43,7 +45,8 @@ router.post('/login',
     console.log(req.session);
     console.log(req.user);
     console.log(req.isAuthenticated());
-    res.redirect('/');
+    req.flash('success', 'Login Successful!');
+    res.redirect('/listings');
   }
 );
 

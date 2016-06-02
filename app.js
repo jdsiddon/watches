@@ -12,7 +12,9 @@ const Strategy = require('passport-local').Strategy;
 const expressSession = require('express-session');
 
 const db = require('./db');       // Database connection information.
-const auth = require('./auth');
+
+// Passport configs.
+const auth = require('./auth/index');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
@@ -22,6 +24,7 @@ const listings = require('./routes/listings');
 // API
 const listingApi = require('./routes/api/listing');
 const siteApi = require('./routes/api/site');
+const userApi = require('./routes/api/user');
 
 const app = express();
 
@@ -67,10 +70,15 @@ app.use('/', routes);             // Unprotected routes.
 
 // Require Authorization to vist all routes from here on.
 app.use(function(req, res, next) {
-  if (req.isAuthenticated() || req.path === '/users/login') {
+  if (req.isAuthenticated()
+  || req.path === '/users/login'
+  || req.path === '/users/new'
+  || req.path === '/api/listings'
+  || req.path === '/api/users/login') {
+    console.log("First Path: " + req.path);
     next();
+
   } else {
-    console.log(req.path);
     res.redirect("/users/login");
   }
 });
@@ -80,8 +88,9 @@ app.use('/watches', watches);
 app.use('/listings', listings);
 
 // API Routes
-app.use('/api/listing', listingApi);
-app.use('/api/site', siteApi);
+app.use('/api/listings', listingApi);
+app.use('/api/sites', siteApi);
+app.use('/api/users', userApi);
 
 
 // catch 404 and forward to error handler
