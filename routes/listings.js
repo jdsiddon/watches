@@ -21,7 +21,6 @@ router.get('/', function(req, res, next) {
     .populate('_site')
     .populate('_user')
     .exec(function(err, listings) {
-      // console.log(listings);
       res.render('listings/index', {
         title: 'Your Current Listings',
         listings: listings
@@ -42,14 +41,13 @@ router.get('/new', function(req, res, next) {
 });
 
 
-// Edit listing
+// Get listing edit form.
 router.get('/edit/:id', function(req, res, next) {
   Listing
     .findById(req.params.id)
     .populate('_site')
     .exec(function(err, listing) {
       Site.find(function(err, sites) {
-        console.log(listing);
         res.render('listings/form', {
           title: 'Update',
           listing: listing,
@@ -60,11 +58,46 @@ router.get('/edit/:id', function(req, res, next) {
 });
 
 
+// Update listing.
+router.post('/edit/:id', upload.single('image'), function(req, res, next) {
+  console.log(req.body);
+
+  listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
+    if(err || !listing) {
+      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
+    } else {
+
+      if(req.body.site) {     // If user provided a site, link the site up.
+        Site.findById(req.body.site, function(err, site) {
+          listing._site = site._id;    // Connect the site to the listing.
+        });
+      }
+
+      listing._user = req.user._id;
+      listing.price = req.body.price;
+      listing.url = req.body.url;
+      listing.type = req.body.type;
+      listing.state = req.body.state;
+      if(req.file) {
+        listing.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;                  // /uploads/[IMG_NAME]
+      }
+      listing.watch.brand = req.body.watch.brand;
+      listing.watch.model_name = req.body.watch.model_name;
+
+      listing.save(function (err, listing) {
+        if (err) return console.error(err);
+
+        req.flash('success', 'Updated listing');
+        res.redirect('/listings');
+      });
+    }
+  });
+});
+
+
 // Create listing
 router.post('/create', upload.single('image'), function(req, res, next) {
   console.log(req.body);
-
-  
 
   Site.findById(req.body.site, function(err, site) {
 
@@ -73,7 +106,6 @@ router.post('/create', upload.single('image'), function(req, res, next) {
     list._site = site._id;
     list._user = req.user._id;
     list.price = req.body.price;
-    list.date = req.body.date;
     list.url = req.body.url;
     list.type = req.body.type;
     list.state = req.body.state;

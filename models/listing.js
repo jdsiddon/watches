@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const moment = require('moment');
 const siteSchema = require('./site');
 
 var ListingSchema = new Schema({
@@ -20,10 +19,6 @@ var ListingSchema = new Schema({
   price: {
     type: Number,
     required: [true, 'Listing \'Price\' required']
-  },
-  date: {
-    type: Date,
-    required: [true, 'Listing \'Date\' required']
   },
   url: {
     type: String,
@@ -47,12 +42,6 @@ var ListingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }
-});
-
-
-ListingSchema.pre('save', function(next) {
-  this.date = moment(this.date, "M/D/YYYY");                // Clean moment.''
-  next();
 });
 
 mongoose.model('Listing', ListingSchema);
