@@ -27,11 +27,12 @@ router.post('/logout', function(req, res, next) {
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res, next) {
-    
+
     // User is authenticated, now create the new item.
     if(req.body.new_item) {
       next();
-    } else {
+    }
+    else {
       // Send success message, user isn't trying to create new item.
       res.json({
         success: 'true',

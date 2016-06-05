@@ -109,7 +109,9 @@ router.post('/create', upload.single('image'), function(req, res, next) {
     list.url = req.body.url;
     list.type = req.body.type;
     list.state = req.body.state;
-    list.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;                  // /uploads/[IMG_NAME]
+    if(req.file) {
+      list.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;                  // /uploads/[IMG_NAME]
+    }
     list.watch.brand = req.body.watch.brand;
     list.watch.model_name = req.body.watch.model_name;
 
@@ -123,6 +125,30 @@ router.post('/create', upload.single('image'), function(req, res, next) {
     });
   })
 
+});
+
+/* Delete Listing */
+router.delete('/:id', function(req, res, next) {
+  Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
+    if(err || !listing) {
+      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
+    } else {
+      console.log(listing);
+      listing.remove(function(err, result) {
+        if(err) {
+          res.json({
+            success: 'false',
+            message: err
+          });
+        }
+        // res.render('/');
+        res.json({
+          success: 'true',
+          message: 'Successfully Removed'
+        });
+      });
+    }
+  });
 });
 
 module.exports = router;

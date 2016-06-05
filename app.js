@@ -22,9 +22,9 @@ const watches = require('./routes/watches');
 const listings = require('./routes/listings');
 
 // API
-const listingApi = require('./routes/api/listing');
-const siteApi = require('./routes/api/site');
-const userApi = require('./routes/api/user');
+const listingApi = require('./routes/api/listings');
+const siteApi = require('./routes/api/sites');
+const userApi = require('./routes/api/users');
 
 const app = express();
 
@@ -76,6 +76,9 @@ app.use(function(req, res, next) {
   || req.path === '/users/login'
   || req.path === '/users/new'
   || req.path === '/api/listings'
+  || req.path === '/api/listings/new'
+  || req.path === '/api/listings/delete'
+  || req.path === '/api/listings/get'
   || req.path === '/api/users/login') {
     console.log("First Path: " + req.path);
     next();

@@ -17,29 +17,65 @@ var upload = multer({
 
 
 /* Get all Listings. */
-router.get('/', function(req, res, next) {
-  Listing.find(function(err, listings) {
-    if(err) {
-      res.json({
-        success: 'false',
-        message: err
-      });
-    }
+router.post('/',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res, next) {
+    Listing
+    .find({ _user: req.user })
+    .exec(function(err, listings) {
+      if(err) {
+        res.json({
+          success: 'false',
+          message: err
+        });
+      }
 
-    res.json({
-      success: 'true',
-      message: 'success',
-      listings: listings
-    });
-  })
-});
+      res.json({
+        success: 'true',
+        message: 'success',
+        listings: listings
+      });
+    })
+  });
+
+/* Get one Listing. */
+router.post('/get',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res, next) {
+    console.log(req.body);
+    Listing.findById(req.body.id, function(err, listing) {
+      if(err) {
+        res.json({
+          success: 'false',
+          message: err
+        });
+      }
+
+      Site.findById(listing._site, function(err, site) {
+        if(err) {
+          res.json({
+            success: 'false',
+            message: err
+          });
+        }
+        console.log(listing);
+        console.log(site);
+        res.json({
+          success: 'true',
+          message: 'success',
+          listing: listing,
+          site: site
+        });
+      })
+    })
+  });
 
 
 /* Create new Listing. */
-router.post('/',
+router.post('/new',
   passport.authenticate('local', { failureRedirect: '/login' }),
   upload.single('image'),
-  (req, res, next) => {
+  function(req, res, next) {
     // Write image to file.
     console.log(__dirname);
     var imageName = shortid.generate();
@@ -141,6 +177,35 @@ router.put('/:id', function(req, res, next) {
     }
   });
 });
+
+/* Delete Listing for Android */
+router.post('/delete',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res, next) {
+  listing = Listing.findById(req.body.id, function(err, listing) {      // Find the listing.
+    if(err || !listing) {
+      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
+    } else {
+
+      listing.remove(function(err, result) {
+        if(err) {
+          res.json({
+            success: 'false',
+            message: err
+          });
+        }
+
+        res.json({
+          success: 'true',
+          message: result,
+          success: listing
+        });
+      });
+
+    }
+  });
+});
+
 
 /* Delete Listing */
 router.delete('/:id', function(req, res, next) {

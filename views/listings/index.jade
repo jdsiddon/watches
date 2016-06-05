@@ -15,6 +15,7 @@ block content
         th Site
         th Listing Link
         th
+        th
     tbody
       each listing in listings
         tr
@@ -30,5 +31,6 @@ block content
             a(href='http://#{listing.url}' target='_blank') Go To
           td 
             a(href='listings/edit/#{listing.id}') Edit
-    
+          td 
+            button.btn.btn-danger.delete(value='#{listing.id}') Delete
   a.btn.btn-default(type='button' href='listings/new') New Listing

@@ -5,4 +5,19 @@ $(document).ready(function() {
     $(".alert").alert('close');
   });
 
+  $(".delete").click(function() {
+    var url = '/listings/' + $(this).val();
+    console.log(url);
+
+    $.ajax({
+      url: url,
+      type: 'DELETE',
+      success: function(result) {
+        test = this;
+        location.reload();
+        alert(result["message"]);
+      }
+    });
+  });
+
 });

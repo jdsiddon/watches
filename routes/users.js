@@ -18,7 +18,6 @@ router.post('/new', function(req, res, next) {
     if(err) {
       res.render('/users/new');
     }
-
     res.redirect('login');
   });
 });
