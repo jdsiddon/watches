@@ -79,6 +79,7 @@ app.use(function(req, res, next) {
   || req.path === '/api/listings/new'
   || req.path === '/api/listings/delete'
   || req.path === '/api/listings/get'
+  || req.path === '/api/listings/edit'
   || req.path === '/api/users/login') {
     console.log("First Path: " + req.path);
     next();

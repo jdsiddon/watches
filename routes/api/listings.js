@@ -149,33 +149,75 @@ router.post('/new',
 
 
 /* Edit Listing */
-router.put('/:id', function(req, res, next) {
-  listing = Listing.findById(req.params.id, function(err, listing) {      // Find the listing.
-    if(err || !listing) {
-      res.json({ success: 'false', failure: (err ? err : 'listing not found') });
-    } else {
+router.post('/edit',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  upload.single('image'),
+  function(req, res, next) {
+    console.log(req.body);
 
-      if(req.body.site) {     // If user provided a site, link the site up.
-        Site.findById(req.body.site, function(err, site) {
-          listing._site = site._id;    // Connect the site to the listing.
-          listing.save(function(err, listing) {
-            res.json({
-              success: 'true',
-              message: 'success',
-              listing: listing
-            });
-          })
-        })
+    listing = Listing.findById(req.body.id, function(err, listing) {      // Find the listing.
+      if(err || !listing) {
+        res.json({ success: 'false', failure: (err ? err : 'listing not found') });
       } else {
-        res.json({
-          success: 'true',
-          message: 'success',
-          listing: listing
+
+        if(req.body.site) {     // If user provided a site, link the site up.
+          Site.findOne({ name: req.body.site}, function(err, site) {
+            listing._site = site._id;    // Connect the site to the listing.
+          });
+        }
+
+        listing._user = req.user._id;
+        listing.price = req.body.price;
+        listing.url = req.body.url;
+        listing.type = req.body.type;
+        listing.state = req.body.state;
+        if(req.file) {
+          listing.img = "/" + req.file.destination.split("/")[1] + "/" + req.file.filename;                  // /uploads/[IMG_NAME]
+        }
+        listing.watch.brand = req.body.watch.brand;
+        listing.watch.model_name = req.body.watch.model_name;
+
+        listing.save(function (err, listing) {
+          if (err) return console.error(err);
+
+          res.json({
+            success: 'true',
+            message: 'success',
+            listing: listing
+          });
         });
       }
+    });
 
-    }
-  });
+
+
+
+    // listing = Listing.findById(req.body.id, function(err, listing) {      // Find the listing.
+    //   if(err || !listing) {
+    //     res.json({ success: 'false', failure: (err ? err : 'listing not found') });
+    //   } else {
+    //
+    //     if(req.body.site) {     // If user provided a site, link the site up.
+    //       Site.findById(req.body.site, function(err, site) {
+    //         listing._site = site._id;    // Connect the site to the listing.
+    //         listing.save(function(err, listing) {
+    //           res.json({
+    //             success: 'true',
+    //             message: 'success',
+    //             listing: listing
+    //           });
+    //         })
+    //       })
+    //     } else {
+    //       res.json({
+    //         success: 'true',
+    //         message: 'success',
+    //         listing: listing
+    //       });
+    //     }
+    //
+    //   }
+    // });
 });
 
 /* Delete Listing for Android */

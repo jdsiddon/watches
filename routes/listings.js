@@ -98,6 +98,7 @@ router.post('/edit/:id', upload.single('image'), function(req, res, next) {
 // Create listing
 router.post('/create', upload.single('image'), function(req, res, next) {
   console.log(req.body);
+  console.log(req.user);
 
   Site.findById(req.body.site, function(err, site) {
 
