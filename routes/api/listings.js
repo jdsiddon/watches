@@ -81,7 +81,7 @@ router.post('/new',
     var imageName = shortid.generate();
 
     // => [Error: EISDIR: illegal operation on a directory, open <directory>]
-    fs.writeFile(imageName, new Buffer(req.body.img, 'base64'), (err) => {
+    fs.writeFile(imageName, new Buffer(req.body.img, 'base64'), function (err) {
       var newListing = req.body;
       req.body._user = req.user._id;
 
